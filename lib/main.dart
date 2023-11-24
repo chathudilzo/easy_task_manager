@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:easy_task_manager/controllers/box_controller.dart';
 import 'package:easy_task_manager/objects/task.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -11,15 +12,8 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 void main() async{
-  var path=Directory.current.path;
-  Hive.init(path);
-  Hive.registerAdapter(CategoryAdapter());
-  Hive.registerAdapter(TaskAdapter());
+  Get.put(BoxController());
 
-
-  await Hive.openBox<Category>('categories');
-  await Hive.openBox<Task>('tasks');
-  
   runApp(const MyApp());
 }
 
