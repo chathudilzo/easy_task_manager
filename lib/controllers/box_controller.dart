@@ -106,6 +106,7 @@ Future<void> updateTasksInCategories()async{
           await category.save();
         }
       }
+      loadCategories();
 
   }catch(error){
     print(error.toString());
@@ -139,11 +140,25 @@ Future<void> setCompleted(Task updatedTask)async{
     if(index!=-1){
       
       await tasksBox.putAt(index, updatedTask);
-      updateTasksInCategories();
+      await updateTasksInCategories();
       
       loadTasks();
     }
 
+  }catch(error){
+    print(error.toString());
+  }
+}
+
+Future<void> deleteTasks(Task delTask)async{
+  try{
+    var taskBox=await Hive.openBox<Task>('tasks');
+    int index=taskList.indexWhere((task) =>task.key==delTask.key);
+    if(index!=-1){
+      await taskBox.deleteAt(index);
+      await updateTasksInCategories();
+      loadTasks();
+    }
   }catch(error){
     print(error.toString());
   }

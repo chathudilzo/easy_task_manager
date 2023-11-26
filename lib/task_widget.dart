@@ -21,7 +21,7 @@ class _TaskWidgetState extends State<TaskWidget> {
 
     return InkWell(
       onTap: () {
-        Get.to(TaskPage());
+        Get.to(TaskPage(task: widget.task,));
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -51,7 +51,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                 },),
                 Expanded(child: Container()),
                 IconButton(onPressed: (){
-
+                  boxController.deleteTasks(widget.task);
                 }, icon: Icon(Icons.delete,color: Colors.orange,))
               ],
             ),
