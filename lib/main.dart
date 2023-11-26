@@ -1,5 +1,6 @@
 
 import 'dart:ui';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:easy_task_manager/controllers/box_controller.dart';
 
 import 'package:easy_task_manager/home_page.dart';
@@ -26,7 +27,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: AnimatedSplashScreen(
+        
+        splash: 
+        Image(image: AssetImage('assets/loading.gif'),fit: BoxFit.cover,
+        ),
+      
+        
+      
+       nextScreen: MyHomePage(),
+       duration: 2500,
+       backgroundColor: Colors.black,
+       ),
     );
   }
 }
@@ -47,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
   
     return Scaffold(
-      
+      backgroundColor: Colors.black,
       body:Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

@@ -12,7 +12,7 @@ class Task extends HiveObject{
   late String description;
 
   @HiveField(2)
-  late DateTime createdTime;
+  late String createdTime;
 
   @HiveField(3)
   late bool isCompleted;

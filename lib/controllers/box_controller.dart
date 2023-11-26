@@ -3,6 +3,7 @@ import 'package:easy_task_manager/objects/task.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class BoxController extends GetxController{
   var taskList=<Task>[].obs;
@@ -74,7 +75,7 @@ Future<void> addTask(Category category,String title,String description)async{
     
     var tasksBox=await Hive.openBox<Task>('tasks');
 
-    Task newTask=Task(title, description, false, DateTime.now(),category.name);
+    Task newTask=Task(title, description, false,DateFormat('yyyy-MM-dd').format(DateTime.now()),category.name);
 
     tasksBox.add(newTask);
     

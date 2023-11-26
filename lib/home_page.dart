@@ -5,6 +5,7 @@ import 'package:easy_task_manager/task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 import 'objects/task.dart';
 
@@ -17,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 final BoxController boxController=Get.find();
-
+final TextEditingController searchController=TextEditingController();
 @override
   void initState() {
     // TODO: implement initState
@@ -59,6 +60,7 @@ final BoxController boxController=Get.find();
                             color: const Color.fromARGB(255, 24, 23, 23),
                             borderRadius: BorderRadius.circular(10)),
                           child: TextField(
+                            controller: searchController,
                             style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               label: Text('Search for tasks'),
@@ -84,7 +86,7 @@ final BoxController boxController=Get.find();
                   ),
                 ),
               _buildCategoryList(),
-                _buildIncompleteTaskList(),
+                _buildIncompleteTaskList(searchController),
               ],
             ),
           
@@ -271,7 +273,7 @@ Future<void> _showDialog(){
     ));
   }
 
-  Widget _buildIncompleteTaskList(){
+  Widget _buildIncompleteTaskList(TextEditingController controller){
     BoxController boxController=Get.find();
 
     
@@ -289,13 +291,13 @@ Future<void> _showDialog(){
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:[
               Padding(padding: const EdgeInsets.all(8),
-              child: Text('Today Tasks',style: TextStyle(
+              child: Text(controller.text!=''?'Search Tasks':'Today Tasks',style: TextStyle(
                 fontSize: 25,
                 color: Colors.white,
                 fontWeight: FontWeight.bold
               ),)),
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(25.0),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20)
@@ -303,7 +305,7 @@ Future<void> _showDialog(){
                   height: 300,
                   child: Obx(
                     (){
-                      List<Task> incompleteTasks=boxController.taskList;
+                      List<Task> incompleteTasks=controller.text==''?boxController.taskList.where((task) =>task.createdTime.contains(DateFormat('yyyy-MM-dd').format(DateTime.now()))).toList() :boxController.taskList.where((task) =>task.title.contains(controller.text)).toList();
                       return ListView.builder(
                       shrinkWrap: true,
                       itemCount: incompleteTasks.length,

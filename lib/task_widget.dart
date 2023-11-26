@@ -42,7 +42,9 @@ class _TaskWidgetState extends State<TaskWidget> {
               children: [
                 Icon(Icons.task_alt_rounded,color:widget.task.isCompleted? Colors.blueAccent:Colors.red,size: 30,),
                 SizedBox(width: 20,),
-                Text(widget.task.title,style: TextStyle(color: Colors.white,fontSize: 20),),
+                SizedBox(
+                  width: 130,
+                  child: Text(widget.task.title,overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white,fontSize: 20),)),
                 Checkbox(
                   checkColor: Colors.white,
                   value: widget.task.isCompleted, onChanged:(value) {
