@@ -1,15 +1,12 @@
-import 'dart:io';
+
 import 'dart:ui';
 import 'package:easy_task_manager/controllers/box_controller.dart';
-import 'package:easy_task_manager/objects/task.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:easy_task_manager/home_page.dart';
-import 'package:easy_task_manager/objects/category.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
+
 
 void main() async{
   Get.put(BoxController());

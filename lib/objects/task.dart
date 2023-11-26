@@ -17,5 +17,8 @@ class Task extends HiveObject{
   @HiveField(3)
   late bool isCompleted;
 
-  Task(this.title,this.description,this.isCompleted,this.createdTime);
+  @HiveField(4)
+  late String categoryName;
+
+  Task(this.title,this.description,this.isCompleted,this.createdTime,this.categoryName);
 }

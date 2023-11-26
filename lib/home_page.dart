@@ -1,5 +1,7 @@
+import 'package:easy_task_manager/category_page.dart';
 import 'package:easy_task_manager/controllers/box_controller.dart';
 import 'package:easy_task_manager/objects/category.dart';
+import 'package:easy_task_manager/task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -15,6 +17,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 final BoxController boxController=Get.find();
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //boxController.initializeHive();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +94,7 @@ final BoxController boxController=Get.find();
   }
 
 Future<void> _showDialog(){
-  Rx<Category> selectedCategory=Rx<Category>(Category(''));
+  Rx<Category> selectedCategory=Rx<Category>(Category('',''));
   RxList<DropdownMenuItem<Category>> dropDownMenuItems=<DropdownMenuItem<Category>>[].obs;
   TextEditingController titleController=TextEditingController();
   TextEditingController descriptionController=TextEditingController();
@@ -96,7 +105,7 @@ Future<void> _showDialog(){
     return DropdownMenuItem(child: Text(category.name), value: category);
   }).toList());;
 
-  selectedCategory.value = dropDownMenuItems.isNotEmpty ? dropDownMenuItems.first.value! : Category('');
+  selectedCategory.value = dropDownMenuItems.isNotEmpty ? dropDownMenuItems.first.value! : Category('','');
 
   return showDialog(context: context, builder:(BuildContext context){
     return AlertDialog(
@@ -162,7 +171,9 @@ Future<void> _showDialog(){
         }, child: Text('Cancel')),
         TextButton(onPressed: (){
           if(titleController.text!='' && descriptionController!=''){
-            boxController.addTask(selectedCategory.value, titleController.text, descriptionController.text);
+            
+            boxController.addTask(selectedCategory.value, titleController.text, descriptionController.text,);
+            Navigator.pop(context);
           }
         }, child: Text('Submit'))
       ],
@@ -173,47 +184,143 @@ Future<void> _showDialog(){
   Widget _buildCategoryList(){
     // var categoriesBox=Hive.box<Category>('categories');
     // List<Category> categories=categoriesBox.values.toList();
+    final TextEditingController categoryController=TextEditingController();
 
-    return SingleChildScrollView(
+    return Obx(() => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children:boxController.categoryList.map((category) =>InkWell(
+          children:[...boxController.categoryList.map((category) =>InkWell(
             onTap: () {
+              Get.to(CategoryPage(category: category));
+            },child: Padding(padding: const EdgeInsets.all(10),child: Container(
+              width: 150,
+              height: 200,
+              decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(10)),
               
-            },child: Padding(padding: const EdgeInsets.all(10),child: Chip(label: Text(category.name)),),
+              child: Column(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(image: AssetImage(category.img.toString()),fit: BoxFit.contain)
+                    ),
+                  
+                  ),
+                  Text('${category.name}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                  Text(category.tasks.length==0?'':'+${category.tasks.length}Tasks',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),)
+                ],
+              ),
+            ),),
           ) 
           ).toList(),
+          GestureDetector(
+            onTap: () {
+              showDialog(context: context, builder: (BuildContext context){
+                return AlertDialog(
+                  title: Text('Add Category'),
+                  content: SizedBox(
+                    height: 100,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TextField(
+                          
+                          controller: categoryController,
+                          decoration: InputDecoration(
+                            label: Text('Category Name'),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            )
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(onPressed:() {
+                      Navigator.pop(context);
+                    }, child: Text('Cancel')),
+                    TextButton(onPressed: (){
+                      boxController.addCategory(categoryController.text,'assets/task.png');
+                      Navigator.pop(context);
+                    }, child: Text('Add')),
+                    
+                  ],
+                );
+              });
+            },
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Icon(Icons.add),
+                    Text('Category')
+                  ],
+                ),
+              ),
+            ))
+          ]
         ),
       
-    );
+    ));
   }
 
   Widget _buildIncompleteTaskList(){
-    var tasksBox=Hive.box<Task>('tasks');
-    List<Task> incompleteTasks=tasksBox.values.where((task) =>!task.isCompleted).toList();
+    BoxController boxController=Get.find();
+
+    
 
     return 
 
-    Column(
-        children:[
-          Padding(padding: const EdgeInsets.all(8),
-          child: Text('Incomplete Tasks'),),
-          SizedBox(
-            height: 400,
-            child: ListView.builder(
-              itemCount: incompleteTasks.length,
-              itemBuilder:(context,index){
-                var task=incompleteTasks[index];
-                return ListTile(
-                  title: Text(task.title),
-                  trailing: Text(task.createdTime.toString()),
-                );
-              } 
-              
-              ),
-          )
-        ],
-      
+    Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 48, 47, 47),
+          borderRadius: BorderRadius.circular(40)
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children:[
+              Padding(padding: const EdgeInsets.all(8),
+              child: Text('Today Tasks',style: TextStyle(
+                fontSize: 25,
+                color: Colors.white,
+                fontWeight: FontWeight.bold
+              ),)),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20)
+                  ),
+                  height: 300,
+                  child: Obx(
+                    (){
+                      List<Task> incompleteTasks=boxController.taskList;
+                      return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: incompleteTasks.length,
+                      itemBuilder:(context,index){
+                        var task=incompleteTasks[index];
+                        return TaskWidget(task: task);
+                      } 
+                      
+                      );
+                    }
+                  ),
+                ),
+              )
+            ],
+          
+        ),
+      ),
     );
   }
 }

@@ -27,17 +27,25 @@ Future<void> initializeHive()async{
     Hive.registerAdapter(TaskAdapter());
 
     var  categoriesBox=await Hive.openBox<Category>('categories');
+    
     var  tasksBox=await Hive.openBox<Task>('tasks');
+    
+    // await categoriesBox.clear();
+    // await tasksBox.clear();
 
+  print(categoriesBox.values.toString());
     if(categoriesBox.isEmpty){
-      await categoriesBox.add(Category('Sport'));
-      await categoriesBox.add(Category('Education'));
-      await categoriesBox.add(Category('Business'));
-      await categoriesBox.add(Category('Personal'));
+      await categoriesBox.add(Category('Sport','assets/sport.png'));
+      await categoriesBox.add(Category('Coding','assets/code.png'));
+      await categoriesBox.add(Category('Education','assets/edu.png'));
+      await categoriesBox.add(Category('Business','assets/business.png'));
+      await categoriesBox.add(Category('Personal','assets/personal.png'));
     }
     categoryList.value=categoriesBox.values.toList();
+    print(categoryList);
+    
     taskList.value=tasksBox.values.toList();
-
+    print(taskList);
   }catch(error){
     print(error.toString());
   }
@@ -63,17 +71,83 @@ Future<void> loadTasks()async{
 
 Future<void> addTask(Category category,String title,String description)async{
   try{
+    
     var tasksBox=await Hive.openBox<Task>('tasks');
-    Task newTask=Task(title, description, false, DateTime.now());
+
+    Task newTask=Task(title, description, false, DateTime.now(),category.name);
+
     tasksBox.add(newTask);
-    category.addTask(newTask);
+    
+    updateTasksInCategories();
     loadTasks();
+    print(taskList);
   }catch(error){
     print(error.toString());
   }
 }
 
-//Future<void> addCategory()
+Future<void> updateTasksInCategories()async{
+  try{
+    var tasksBox=await Hive.openBox<Task>('tasks');
+    var categoriesBox=await Hive.openBox<Category>('categories');
+
+      for(var category in categoriesBox.values){
+        category.clearTasks();
+        await category.save();
+      }
+
+      for(int i=0;i<tasksBox.length;i++){
+        Task task=tasksBox.getAt(i) as Task;
+
+        Category? category=categoriesBox.values.firstWhere((category) => category.name==task.categoryName,orElse: null);
+
+        if(category!=null){
+          category.addTask(task);
+          await category.save();
+        }
+      }
+
+  }catch(error){
+    print(error.toString());
+  }
+}
+
+
+
+Future<void> addCategory(String name,String img)async{
+try{
+  var categoriesBox=await Hive.openBox<Category>('categories');
+  Category newCategory=Category(
+    name,
+    img
+
+  );
+  categoriesBox.add(newCategory);
+  loadCategories();
+}catch(error){
+  print(error.toString());
+}
+}
+
+Future<void> setCompleted(Task updatedTask)async{
+  try{
+    updatedTask.isCompleted=!updatedTask.isCompleted;
+    var tasksBox=await Hive.openBox<Task>('tasks');
+    
+    print(updatedTask.key);
+    int index=taskList.indexWhere((task) =>task.key==updatedTask.key);
+    if(index!=-1){
+      
+      await tasksBox.putAt(index, updatedTask);
+      updateTasksInCategories();
+      
+      loadTasks();
+    }
+
+  }catch(error){
+    print(error.toString());
+  }
+}
 
 
 }

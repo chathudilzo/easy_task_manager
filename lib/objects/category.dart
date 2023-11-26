@@ -12,9 +12,15 @@ class Category extends HiveObject{
   @HiveField(1)
   List<Task> tasks=[];
 
-  Category(this.name);
+  @HiveField(2)
+  String? img;
+  Category(this.name,this.img);
 
   void addTask(Task task){
     tasks.add(task);
+  }
+
+  void clearTasks(){
+    tasks.clear();
   }
 }
