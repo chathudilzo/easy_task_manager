@@ -1,16 +1,32 @@
-# easy_task_manager
+# Task Manager App
 
-A new Flutter project.
+A simple task management app built with Flutter and Hive.
+
+## Overview
+
+Task Manager App is a mobile application that helps you organize your tasks efficiently. It allows you to create tasks, categorize them, and manage your to-do list effectively.
+
+## Features
+
+- **Category Management:** Create and customize task categories to organize your tasks better.
+
+- **Task Creation:** Easily add new tasks with titles, descriptions, and due dates.
+
+- **Category Filtering:** View tasks based on their categories for focused task management.
+
+- **Completion Tracking:** Mark tasks as completed to keep track of your progress.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To run the app locally and generate Hive adapters, follow these steps:
 
-A few resources to get you started if this is your first Flutter project:
+1. Clone the repository:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+flutter pub get
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Generate Hive adapters:
+
+### flutter packages pub run build_runner build
+
+
+
